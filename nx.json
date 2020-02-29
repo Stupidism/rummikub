@@ -23,6 +23,13 @@
     },
     "api-interfaces": {
       "tags": []
+    },
+    "waves": {
+      "tags": []
+    },
+    "waves-e2e": {
+      "tags": [],
+      "implicitDependencies": ["waves"]
     }
   }
 }
