@@ -1,0 +1,28 @@
+{
+  "npmScope": "rummikub",
+  "implicitDependencies": {
+    "workspace.json": "*",
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
+    "tsconfig.json": "*",
+    "tslint.json": "*",
+    "nx.json": "*"
+  },
+  "projects": {
+    "rummikub": {
+      "tags": []
+    },
+    "rummikub-e2e": {
+      "tags": [],
+      "implicitDependencies": ["rummikub"]
+    },
+    "api": {
+      "tags": []
+    },
+    "api-interfaces": {
+      "tags": []
+    }
+  }
+}
