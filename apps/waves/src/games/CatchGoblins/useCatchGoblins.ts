@@ -1,26 +1,36 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 import { useKey, useRaf, useCounter } from 'rooks';
+import useImage from 'use-image';
 
-import { directionKeys, directionByKey, DIRECTION_UP, DIRECTION_DOWN, DIRECTION_LEFT, DIRECTION_RIGHT, reverseDirectionByDirection } from './keyDirections';
+import {
+  directionKeys,
+  directionByKey,
+  DIRECTION_UP,
+  DIRECTION_DOWN,
+  DIRECTION_LEFT,
+  DIRECTION_RIGHT,
+  reverseDirectionByDirection,
+} from './keyDirections';
 
 const rangeShrink = (val, min, max) => Math.max(min, Math.min(val, max));
-const distance = (from, to) => Math.sqrt((from.x - to.x) ** 2 + (from.y - to.y) ** 2);
+const distance = (from, to) =>
+  Math.sqrt((from.x - to.x) ** 2 + (from.y - to.y) ** 2);
 
 const useCatchGoblins = ({ width, height, borderWidth, baseSpeed }) => {
+  const [backgroundImage] = useImage('assets/background.png');
   const [heroPos, setHeroPos] = useState(initHeroPos);
   const [monsterPos, setMonsterPos] = useState(getRandomMonsterPos);
   const { value: caughtCount, increment } = useCounter(0);
   const speed = useRef({ dx: 0, dy: 0 });
   const time = useRef(Date.now());
-  const renderTime = useRef(Date.now());
   const pressing = useRef(new Set());
+  const layerRef = useRef(null);
 
-  useEffect(() => {
-    console.log('interval', Date.now() - renderTime.current);
-    renderTime.current = Date.now();
+  useLayoutEffect(() => {
+    layerRef.current.draw();
   });
 
-  const onHeroPosChange = (newPos) => {
+  const onHeroPosChange = newPos => {
     if (distance(newPos, monsterPos) > 32) {
       setHeroPos(newPos);
     } else {
@@ -31,27 +41,36 @@ const useCatchGoblins = ({ width, height, borderWidth, baseSpeed }) => {
   };
 
   useKey(directionKeys, handleSpeedChange, {
-    eventTypes: ["keydown", "keyup"]
+    eventTypes: ['keydown', 'keyup'],
   });
 
   useRaf(updateHeroPos, true);
 
   return {
+    backgroundImage,
     caughtCount,
     heroPos,
     monsterPos,
-    fps: rangeShrink(Math.round(1000 / (Date.now() - time.current)), 0, 60),
+    layerRef,
   };
 
   function updateHeroPos() {
     const now = Date.now();
-    // console.log('now', now - time.current);
-    if (speed.current.dx !== 0 || speed.current.dy !== 0 ) {
+    if (speed.current.dx !== 0 || speed.current.dy !== 0) {
       const second = (now - time.current) / 1000;
-      onHeroPosChange({
-        x: rangeShrink(heroPos.x + speed.current.dx * second, borderWidth, width - 2 * borderWidth),
-        y: rangeShrink(heroPos.y + speed.current.dy * second, borderWidth, height - 2 * borderWidth),
-      });
+      const newPos = {
+        x: rangeShrink(
+          heroPos.x + speed.current.dx * second,
+          borderWidth,
+          width - 2 * borderWidth,
+        ),
+        y: rangeShrink(
+          heroPos.y + speed.current.dy * second,
+          borderWidth,
+          height - 2 * borderWidth,
+        ),
+      };
+      onHeroPosChange(newPos);
     }
     time.current = now;
   }
@@ -67,11 +86,13 @@ const useCatchGoblins = ({ width, height, borderWidth, baseSpeed }) => {
       pressing.current.delete(direction);
     }
 
-    const modifier = isKeyDown 
-      ? 1 
-      : (pressing.current.has(reverseDirection) ? -1 : 0);
+    const modifier = isKeyDown
+      ? 1
+      : pressing.current.has(reverseDirection)
+      ? -1
+      : 0;
 
-    switch(direction) {
+    switch (direction) {
       case DIRECTION_UP:
         speed.current.dy = -1 * modifier * baseSpeed;
         break;
@@ -91,15 +112,15 @@ const useCatchGoblins = ({ width, height, borderWidth, baseSpeed }) => {
     return {
       x: width / 2,
       y: height / 2,
-    }
+    };
   }
 
   function getRandomMonsterPos() {
     return {
-      x: borderWidth + (Math.random() * (width - borderWidth * 3)),
-      y: borderWidth + (Math.random() * (height - borderWidth * 3)),
-    }
+      x: borderWidth + Math.random() * (width - borderWidth * 3),
+      y: borderWidth + Math.random() * (height - borderWidth * 3),
+    };
   }
-}
+};
 
 export default useCatchGoblins;
