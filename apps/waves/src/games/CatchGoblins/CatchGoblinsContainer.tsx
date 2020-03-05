@@ -2,7 +2,7 @@ import React from 'react';
 import CatchGoblins from './CatchGoblins';
 import useCatchGoblins from './useCatchGoblins';
 
-const CatchGoblinsContainer = (props) => {
+const CatchGoblinsContainer = props => {
   const hookData = useCatchGoblins(props);
 
   return <CatchGoblins {...props} {...hookData} />;

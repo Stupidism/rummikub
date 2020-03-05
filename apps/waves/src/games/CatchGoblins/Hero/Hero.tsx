@@ -7,9 +7,7 @@ import useImage from 'use-image';
 export const Hero = ({ x, y }) => {
   const [image] = useImage('../assets/hero.png');
 
-  return (
-    <Image x={x} y={y} image={image} />
-  );
+  return <Image x={x} y={y} image={image} />;
 };
 
 export default Hero;

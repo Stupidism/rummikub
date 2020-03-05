@@ -17,6 +17,7 @@ export const App = () => {
         <img
           width="450"
           src="https://raw.githubusercontent.com/nrwl/nx/master/nx-logo.png"
+          alt="nx logo"
         />
       </div>
       <div>{m.message}</div>

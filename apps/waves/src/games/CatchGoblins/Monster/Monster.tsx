@@ -7,9 +7,7 @@ import useImage from 'use-image';
 export const Monster = ({ x, y }) => {
   const [image] = useImage('../assets/monster.png');
 
-  return (
-    <Image x={x} y={y} image={image} />
-  );
+  return <Image x={x} y={y} image={image} />;
 };
 
 export default Monster;
